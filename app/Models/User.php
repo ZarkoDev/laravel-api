@@ -2,26 +2,22 @@
 
 namespace App\Models;
 
+use App\Notifications\CustomResetPassword;
 use App\Http\Traits\AuthTrait;
 use Illuminate\Auth\Authenticatable as AuthAuthenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword as AuthCanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
-class User extends AppModel implements Authenticatable
+class User extends AppModel implements Authenticatable, AuthCanResetPassword
 {
-    use AuthTrait, AuthAuthenticatable, HasFactory;
+    use AuthTrait, AuthAuthenticatable, HasFactory, CanResetPassword, Notifiable;
 
     protected $fillable = [
         'email',
         'password',
-    ];
-
-    // protected $hidden = [
-    //     'password',
-    // ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
     ];
 
     public function setPasswordAttribute($value)
@@ -31,7 +27,17 @@ class User extends AppModel implements Authenticatable
 
     public function setNewToken()
     {
-        $this->token = $this->generateNewToken();
+        $this->token = $this->generateNewLoginToken();
         $this->save();
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPassword($token));
+    }
+
+    public function jobTasks()
+    {
+        return $this->hasMany('App\Model\JobTask', 'user_id');
     }
 }

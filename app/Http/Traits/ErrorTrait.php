@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 
 trait ErrorTrait
 {
+    // TODO:: Make error trait to work with response CODES !!!
     private $errors = [];
 
     public function getErrors()

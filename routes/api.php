@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UsersController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,10 +22,12 @@ use Illuminate\Support\Facades\Route;
 Route::post('/sign-in', [UsersController::class, 'register']);
 Route::post('/login', [UsersController::class, 'login']);
 Route::post('/forgotten', [UsersController::class, 'forgotPassword']);
-Route::post('/reset-password', [UsersController::class, 'resetPassword']);
+Route::post('/forgotten/{token}', [UsersController::class, 'resetForgotPassword'])->name('password.reset');
 
 
 Route::group(['middleware' => ['api.auth']], function () {
     Route::post('/change-password', [UsersController::class, 'changePassword']);
     Route::post('/change-passowrd', [UsersController::class, 'changePassword']); // Requirements need it. I added if this checks my attention to details :)
+
+    Route::post('/company', [CompanyController::class, 'getCompany']);
 });

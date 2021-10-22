@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserChangePasswordRequest;
-use App\Http\Requests\UserForgotPasswordRequest;
-use App\Http\Requests\UserLoginRequest;
-use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetForgotPasswordRequest;
 use App\Http\Resources\UserLoginResource;
 use App\Http\Services\UserService;
-use Illuminate\Support\Facades\Request;
 
 class UsersController extends Controller
 {
 
-    public function register(UserRegisterRequest $request, UserService $userService)
+    public function register(RegisterRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
         $user = $userService->store($attributes);
@@ -25,7 +25,7 @@ class UsersController extends Controller
         return response('Successfully created user');
     }
 
-    public function login(UserLoginRequest $request, UserService $userService)
+    public function login(LoginRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
         $user = $userService->getLoginToken($attributes);
@@ -37,7 +37,7 @@ class UsersController extends Controller
         return new UserLoginResource($user);
     }
 
-    public function changePassword(UserChangePasswordRequest $request, UserService $userService)
+    public function changePassword(ChangePasswordRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
         $user = $userService->changePassword($attributes);
@@ -49,15 +49,23 @@ class UsersController extends Controller
         return response('Successfully changed password');
     }
 
-    public function forgotPassword(UserForgotPasswordRequest $request, UserService $userService)
+    public function forgotPassword(ForgotPasswordRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
-        $user = $userService->getForgottenPasswordHash($attributes);
 
-        if (!$user) {
+        return response(__('custom.'.$userService->sendForgottenPasswordLink($attributes)));
+    }
+
+    public function resetForgotPassword(ResetForgotPasswordRequest $request, UserService $userService)
+    {
+        $attributes = $request->validated();
+        $attributes['token'] = $request->token;
+        $response = $userService->resetForgottenPassword($attributes);
+
+        if (!$response) {
             return $userService->getErrorResponse();
         }
 
-        return response('Successfully changed password');
+        return response('Successfully reset password');
     }
 }

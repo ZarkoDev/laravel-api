@@ -19,7 +19,7 @@ trait AuthTrait
         return Hash::check($value, $this->password);
     }
 
-    public function generateNewToken()
+    public function generateNewLoginToken()
     {
         return hash('sha256', Str::random(60));
     }

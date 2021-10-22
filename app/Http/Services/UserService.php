@@ -4,6 +4,9 @@ namespace App\Http\Services;
 
 use App\Http\Traits\ErrorTrait;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Password;
+
 class UserService
 {
     use ErrorTrait;
@@ -50,6 +53,28 @@ class UserService
         if (!$user->save()) {
             // TODO:: set response codes
             $this->setError('User password is not updated');
+            return false;
+        }
+
+        return true;
+    }
+
+    public function sendForgottenPasswordLink($attributes)
+    {
+        return Password::sendResetLink($attributes);
+    }
+
+    public function resetForgottenPassword($attributes)
+    {
+        $resetStatus = Password::reset($attributes,
+            function ($user, $password) {
+                $user->password = $password;
+                $user->save();
+            }
+        );
+
+        if ($resetStatus !== Password::PASSWORD_RESET) {
+            $this->setError('Unsuccessfully reset password');
             return false;
         }
 
