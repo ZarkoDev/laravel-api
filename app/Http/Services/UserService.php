@@ -24,7 +24,7 @@ class UserService
         return true;
     }
 
-    public function getLoginToken($attributes)
+    public function login($attributes)
     {
         $user = User::firstWhere('email', $attributes['email']);
 

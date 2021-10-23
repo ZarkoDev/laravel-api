@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Notifications\CustomResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
@@ -24,13 +23,18 @@ class JobTask extends AppModel
         'status',
     ];
 
-    public function todo($token)
+    public function isFailed()
     {
-        $this->notify(new CustomResetPassword($token));
+        return $this->status === self::STATUS_FAILED;
     }
 
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+    public function response()
+    {
+        return $this->hasOne('App\Models\JobTaskResponse', 'job_task_id');
     }
 }

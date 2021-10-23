@@ -29,7 +29,7 @@ class JobTaskService
     {
         switch ($task->type) {
             case JobTask::TYPE_DOMAIN:
-                return dispatch(new DownloadCompanyDetails($task));
+                return DownloadCompanyDetails::dispatch($task)->onQueue('tasks');
             default:
                 $this->setError('Task type is unknown');
                 return false;

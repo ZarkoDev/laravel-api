@@ -36,6 +36,12 @@ class User extends AppModel implements Authenticatable, AuthCanResetPassword
         $this->notify(new CustomResetPassword($token));
     }
 
+    public function hasValidEmail()
+    {
+        // more validates can be made
+        return empty($this->email);
+    }
+
     public function jobTasks()
     {
         return $this->hasMany('App\Model\JobTask', 'user_id');

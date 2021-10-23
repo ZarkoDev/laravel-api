@@ -28,7 +28,7 @@ class UsersController extends Controller
     public function login(LoginRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
-        $user = $userService->getLoginToken($attributes);
+        $user = $userService->login($attributes);
 
         if (!$user) {
             return $userService->getErrorResponse();

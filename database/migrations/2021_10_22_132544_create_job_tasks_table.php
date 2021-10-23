@@ -17,10 +17,12 @@ class CreateJobTasksTable extends Migration
     {
         Schema::create('job_tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'user_id')->nullable()->unsigned();
+            $table->foreignIdFor(User::class, 'user_id')->unsigned();
             $table->tinyInteger('type')->unsigned();
             $table->string('value');
-            $table->tinyInteger('status')->default(JobTask::STATUS_CREATED)->unsigned();
+            $table->unsignedTinyInteger('status')->default(JobTask::STATUS_CREATED);
+            $table->string('error')->nullable();
+            $table->boolean('is_notified')->default(false);
             $table->dateTime('created_at');
             $table->dateTime('updated_at');
         });
