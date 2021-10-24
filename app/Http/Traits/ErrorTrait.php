@@ -4,8 +4,19 @@ namespace App\Http\Traits;
 
 trait ErrorTrait
 {
-    // TODO:: Make error trait to work with response CODES !!!
     private $errors = [];
+    private $statusCode;
+
+    public function hasErrors()
+    {
+        return !empty($this->errors);
+    }
+
+    public function setError(string $message, int $statusCode)
+    {
+        $this->errors[] = $message;
+        $this->statusCode = $statusCode;
+    }
 
     public function getErrors()
     {
@@ -17,18 +28,13 @@ trait ErrorTrait
         return implode(';', $this->errors);
     }
 
-    public function setError(string $message)
-    {
-        $this->errors[] = $message;
-    }
-
-    public function hasErrors()
-    {
-        return !empty($this->errors);
-    }
-
     public function getErrorResponse()
     {
-        return response()->json($this->getErrors(), 400);
+        return response()->json($this->getErrors(), $this->getStatusCode());
+    }
+
+    public function getStatusCode()
+    {
+        return $this->statusCode;
     }
 }

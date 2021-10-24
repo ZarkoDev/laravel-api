@@ -44,7 +44,7 @@ abstract class BaseJobTask
             return false;
         }
         
-        $this->task->user->notify(new JobTaskNotification());
+        $this->task->user->notify(new JobTaskNotification($this->task));
 
         return true;
     }

@@ -8,7 +8,7 @@ use App\Http\Services\JobTaskService;
 class CompanyController extends Controller
 {
 
-    public function getCompany(CompanyRequest $request, JobTaskService $jobTaskService)
+    public function downloadCompanyDetails(CompanyRequest $request, JobTaskService $jobTaskService)
     {
         $attributes = $request->validated();
         $task = $jobTaskService->createDomainTask($attributes);
@@ -21,6 +21,6 @@ class CompanyController extends Controller
             return $jobTaskService->getErrorResponse();
         }
 
-        return response('Successfully created task. You will be notified by email when the task is completed');
+        return response('Successfully created task for download company details. You will be notified by email when the task is completed', static::STATUS_CODE_CREATED);
     }
 }

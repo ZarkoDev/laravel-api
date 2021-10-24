@@ -2,14 +2,11 @@
 
 namespace App\Http\Services;
 
-use App\Http\Traits\ErrorTrait;
 use App\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
 
-class UserService
+class UserService extends BaseService
 {
-    use ErrorTrait;
 
     public function store($attributes)
     {
@@ -17,7 +14,7 @@ class UserService
         $user->fill($attributes);
 
         if (!$user->save()) {
-            $this->setError('User is not created');
+            $this->setError('User creation failed', static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 
@@ -29,7 +26,7 @@ class UserService
         $user = User::firstWhere('email', $attributes['email']);
 
         if (!$user || !$user->isValidPassword($attributes['password'])) {
-            $this->setError('User is not found');
+            $this->setError('User is not found', static::STATUS_NOT_FOUND);
             return false;
         }
 
@@ -43,7 +40,7 @@ class UserService
         $user = User::find(auth()->id());
 
         if (!$user) {
-            $this->setError('User is not found');
+            $this->setError('User is not found', static::STATUS_NOT_FOUND);
             return false;
         }
 
@@ -51,8 +48,7 @@ class UserService
         $user->token = null;
 
         if (!$user->save()) {
-            // TODO:: set response codes
-            $this->setError('User password is not updated');
+            $this->setError('User password is not updated', static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 
@@ -74,7 +70,7 @@ class UserService
         );
 
         if ($resetStatus !== Password::PASSWORD_RESET) {
-            $this->setError('Unsuccessfully reset password');
+            $this->setError('Unsuccessfully reset password', static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 

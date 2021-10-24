@@ -22,7 +22,7 @@ class UsersController extends Controller
             return $userService->getErrorResponse();
         }
 
-        return response('Successfully created user');
+        return response('Successfully created user', static::STATUS_CODE_CREATED);
     }
 
     public function login(LoginRequest $request, UserService $userService)
