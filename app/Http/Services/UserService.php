@@ -14,7 +14,7 @@ class UserService extends BaseService
         $user->fill($attributes);
 
         if (!$user->save()) {
-            $this->setError('User creation failed', static::STATUS_INTERNAL_SERVER_ERROR);
+            $this->setError(__('custom.user_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 
@@ -26,7 +26,7 @@ class UserService extends BaseService
         $user = User::firstWhere('email', $attributes['email']);
 
         if (!$user || !$user->isValidPassword($attributes['password'])) {
-            $this->setError('User is not found', static::STATUS_NOT_FOUND);
+            $this->setError(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
             return false;
         }
 
@@ -40,7 +40,7 @@ class UserService extends BaseService
         $user = User::find(auth()->id());
 
         if (!$user) {
-            $this->setError('User is not found', static::STATUS_NOT_FOUND);
+            $this->setError(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
             return false;
         }
 
@@ -48,7 +48,7 @@ class UserService extends BaseService
         $user->token = null;
 
         if (!$user->save()) {
-            $this->setError('User password is not updated', static::STATUS_INTERNAL_SERVER_ERROR);
+            $this->setError(__('custom.password_update_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 
@@ -70,7 +70,7 @@ class UserService extends BaseService
         );
 
         if ($resetStatus !== Password::PASSWORD_RESET) {
-            $this->setError('Unsuccessfully reset password', static::STATUS_INTERNAL_SERVER_ERROR);
+            $this->setError(__('custom.reset_password_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 

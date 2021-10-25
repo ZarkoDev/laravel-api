@@ -10,6 +10,6 @@ class CustomResetPassword extends ResetPassword
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->action('Reset Password Link', route('password.reset', $this->token));
+            ->action(__('custom.mail_reset_password_notify'), route('password.reset', $this->token));
     }
 }

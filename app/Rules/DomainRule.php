@@ -14,6 +14,6 @@ class DomainRule implements Rule
 
     public function message()
     {
-        return 'Invalid domain name.';
+        return __('custom.domain_invalid');
     }
 }

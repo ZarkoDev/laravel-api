@@ -11,14 +11,14 @@ class LoginRequest extends FormRequest
     {
         return [
             'email'    => 'required|email|exists:users',
-            'password' => 'required|string|min:5|max:12'
+            'password' => 'required|alpha_num|min:5|max:12'
         ];
     }
 
     public function messages()
     {
         return [
-            'email.exists' => 'The email does not exist',
+            'email.exists' => __('custom.user_not_found'),
         ];
     }
 }

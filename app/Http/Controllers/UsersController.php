@@ -22,7 +22,7 @@ class UsersController extends Controller
             return $userService->getErrorResponse();
         }
 
-        return response('Successfully created user', static::STATUS_CODE_CREATED);
+        return response(__('custom.user_creation_success'), static::STATUS_CODE_CREATED);
     }
 
     public function login(LoginRequest $request, UserService $userService)
@@ -46,7 +46,7 @@ class UsersController extends Controller
             return $userService->getErrorResponse();
         }
 
-        return response('Successfully changed password');
+        return response(__('custom.change_password_success'));
     }
 
     public function forgotPassword(ForgotPasswordRequest $request, UserService $userService)
@@ -66,6 +66,6 @@ class UsersController extends Controller
             return $userService->getErrorResponse();
         }
 
-        return response('Successfully reset password');
+        return response(__('custom.password_reset_success'));
     }
 }

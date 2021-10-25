@@ -23,6 +23,6 @@ class JobTaskNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->action('Your task is completed and you can see it here ', route('task.response', $this->task->id));
+            ->action(__('custom.mail_task_creation_notify'), route('task.response', $this->task->id));
     }
 }

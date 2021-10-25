@@ -21,11 +21,11 @@ class ClearbitApiService implements ApiIntegrationInterface
         return env('CLEARBIT_API_KEY');
     }
 
-    public function downloadCompanyDetails($domain)
+    public function downloadCompanyDetails(string $domain)
     {
         $this->response = Http::withToken($this->getApiKey())
             ->get(self::DOWNLOAD_COMPANY_DETAILS_ENDPOINT . $domain);
-            
+
         $this->responseBody = $this->response->collect();
     }
 
@@ -54,13 +54,6 @@ class ClearbitApiService implements ApiIntegrationInterface
 
     public function getResponseBody()
     {
-        $this->prepareBody();
-
         return $this->responseBody;
-    }
-
-    private function prepareBody()
-    {
-        //$this->responseBody->forget('id');
     }
 }

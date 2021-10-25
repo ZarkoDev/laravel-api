@@ -20,12 +20,12 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('/sign-in', [UsersController::class, 'register'])->name('register');
 Route::post('/login', [UsersController::class, 'login'])->name('login');
 Route::post('/forgotten', [UsersController::class, 'forgotPassword'])->name('password.forgot');
 Route::post('/forgotten/{token}', [UsersController::class, 'resetForgotPassword'])->name('password.reset');
 
 Route::group(['middleware' => ['api.auth']], function () {
+    Route::post('/sign-in', [UsersController::class, 'register'])->name('register');
     Route::post('/change-password', [UsersController::class, 'changePassword'])->name('password.change');
     Route::post('/change-passowrd', [UsersController::class, 'changePassword']); // Requirements need it. I added if this checks my attention to details :)
     Route::post('/company', [CompanyController::class, 'downloadCompanyDetails'])->name('company.downloadDetails');

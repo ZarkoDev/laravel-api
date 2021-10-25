@@ -16,7 +16,7 @@ class JobTaskService extends BaseService
         $task->value = $attributes['domain'];
 
         if (!$task->save()) {
-            $this->setError('Task creation failed', static::STATUS_INTERNAL_SERVER_ERROR);
+            $this->setError(__('custom.task_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
             return false;
         }
 
@@ -29,7 +29,7 @@ class JobTaskService extends BaseService
             case JobTask::TYPE_DOMAIN:
                 return DownloadCompanyDetails::dispatch($task)->onQueue('tasks');
             default:
-                $this->setError('Task type is unknown', static::STATUS_BAD_REQUEST);
+                $this->setError(__('custom.task_type_unknown'), static::STATUS_BAD_REQUEST);
                 return false;
         }
     }
@@ -42,7 +42,7 @@ class JobTaskService extends BaseService
             ->first();
 
         if (!$task) {
-            $this->setError('Task is not found', static::STATUS_NOT_FOUND);
+            $this->setError(__('custom.task_not_found'), static::STATUS_NOT_FOUND);
         }
 
         if ($task->response) {

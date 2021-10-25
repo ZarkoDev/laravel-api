@@ -17,7 +17,7 @@ class TaskRequest extends FormRequest
     public function messages()
     {
         return [
-            'task_id.exists' => 'The task does not exist',
+            'task_id.exists' => __('custom.task_not_found'),
         ];
     }
 }

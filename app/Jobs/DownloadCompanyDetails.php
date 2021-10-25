@@ -46,12 +46,12 @@ class DownloadCompanyDetails extends BaseJobTask implements ShouldQueue
         parent::isValidTask();
 
         if ($this->task->type !== JobTask::TYPE_DOMAIN) {
-            $this->setTaskError('Something is wrong with task type');
+            $this->setTaskError(__('custom.job_task_type_wrong'));
             return false;
         }
 
         if (empty($this->task->value)) {
-            $this->setTaskError('Domain is missing');
+            $this->setTaskError(__('custom.domain_missing'));
             return false;
         }
 
@@ -61,7 +61,7 @@ class DownloadCompanyDetails extends BaseJobTask implements ShouldQueue
     protected function executeTask()
     {
         $this->clearbitApiService->downloadCompanyDetails($this->task->value);
-        
+
         $this->task->response()->create([
             'status_code' => $this->clearbitApiService->getHttpStatusCode(),
             'response' => $this->clearbitApiService->getResponseBody()->toJson()
