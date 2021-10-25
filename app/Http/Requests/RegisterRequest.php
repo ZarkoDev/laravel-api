@@ -14,5 +14,4 @@ class RegisterRequest extends FormRequest
             'password' => 'required|alpha_num|min:5|max:12'
         ];
     }
-
 }

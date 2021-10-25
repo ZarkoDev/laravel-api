@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(UserService $userService)
     {
         $userService->store([
-            'email' => 'admin@gmail.com',
+            'email' => env('ADMIN_USER_EMAIL'),
             'password' => 123456
         ]);
     }

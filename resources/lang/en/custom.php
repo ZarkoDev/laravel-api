@@ -18,4 +18,7 @@ return [
     'domain_missing' => 'Domain is missing',
     'mail_task_creation_notify' => 'Your task is completed and you can see it here ',
     'mail_reset_password_notify' => 'Reset Password Link ',
+    'not_authorized' => 'Not authorized',
+    'email_invalid' => 'The email must be a valid email address',
+    'invalid_data' => 'The given data was invalid.',
 ];

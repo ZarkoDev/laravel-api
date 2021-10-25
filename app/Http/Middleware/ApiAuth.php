@@ -20,13 +20,13 @@ class ApiAuth
     {
         //return $request->bearerToken();
         if (empty($request->bearerToken())) {
-            return response('Not authorized', 401);
+            return response(__('custom.not_authorized'), 401);
         }
 
         $user = User::firstWhere('token', $request->bearerToken());
 
         if (!$user) {
-            return response('Not authorized', 401);
+            return response(__('custom.not_authorized'), 401);
         }
 
         Auth::login($user);
