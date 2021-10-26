@@ -10,7 +10,7 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => 'required|string|min:5|max:12'
+            'password' => 'required|alpha_num|min:5|max:12'
         ];
     }
 }

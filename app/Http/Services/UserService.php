@@ -40,7 +40,7 @@ class UserService extends BaseService
         $user = User::find(auth()->id());
 
         if (!$user) {
-            throw new UserNotFoundException(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
+            throw new NotFoundException(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
         }
 
         $user->password = $attributes['password'];
@@ -65,8 +65,10 @@ class UserService extends BaseService
             }
         );
 
+        info('resetPass');
+
         if ($resetStatus !== Password::PASSWORD_RESET) {
-            throw new PasswordResetException(__('custom.reset_password_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
+            throw new PasswordResetException(__('custom.reset_password_failed'), static::STATUS_BAD_REQUEST);
         }
     }
 }

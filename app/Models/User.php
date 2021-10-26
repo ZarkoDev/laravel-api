@@ -48,4 +48,9 @@ class User extends AppModel implements Authenticatable, AuthCanResetPassword
     {
         return $this->hasMany('App\Model\JobTask', 'user_id');
     }
+
+    public function passwordResets()
+    {
+        return $this->hasMany('App\Model\JobTask', 'user_id');
+    }
 }

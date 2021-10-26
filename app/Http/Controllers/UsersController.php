@@ -29,14 +29,6 @@ class UsersController extends Controller
         return new UserLoginResource($user);
     }
 
-    public function changePassword(ChangePasswordRequest $request, UserService $userService)
-    {
-        $attributes = $request->validated();
-        $userService->changePassword($attributes);
-
-        return response(__('custom.change_password_success'));
-    }
-
     public function forgotPassword(ForgotPasswordRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
@@ -51,5 +43,13 @@ class UsersController extends Controller
         $userService->resetForgottenPassword($attributes);
 
         return response(__('custom.password_reset_success'));
+    }
+
+    public function changePassword(ChangePasswordRequest $request, UserService $userService)
+    {
+        $attributes = $request->validated();
+        $userService->changePassword($attributes);
+
+        return response(__('custom.change_password_success'));
     }
 }
