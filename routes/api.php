@@ -29,6 +29,7 @@ Route::group(['middleware' => ['api.auth']], function () {
     Route::post('/change-password', [UsersController::class, 'changePassword'])->name('password.change');
     Route::post('/change-passowrd', [UsersController::class, 'changePassword']); // Requirements need it. I added if this checks my attention to details :)
     Route::post('/company', [CompanyController::class, 'downloadCompanyDetails'])->name('company.downloadDetails');
-    Route::post('/task', [TaskController::class, 'getTaskResponse'])->name('task.response');
+    Route::post('/task/status', [TaskController::class, 'getTaskStatus'])->name('task.status');
+    Route::post('/task/response', [TaskController::class, 'getTaskResponse'])->name('task.response');
 });
 

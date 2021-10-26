@@ -23,6 +23,18 @@ class JobTask extends AppModel
         'status',
     ];
 
+    protected $statusNames = [
+        self::STATUS_CREATED => 'Created',
+        self::STATUS_IN_PROGRESS => 'InProgress',
+        self::STATUS_SUCCESS => 'Successful',
+        self::STATUS_FAILED => 'Failed',
+    ];
+
+    public function getStatusName()
+    {
+        return $this->statusNames[$this->status] ?? null;
+    }
+
     public function isFailed()
     {
         return $this->status === self::STATUS_FAILED;

@@ -35,6 +35,17 @@ class JobTaskService extends BaseService
         }
     }
 
+    public function getTask(array $attributes)
+    {
+        $task = Auth()->user()->jobTasks()->firstWhere(['id' => $attributes['task_id']]);
+
+        if (!$task) {
+            throw new NotFoundException(__('custom.task_not_found'), static::STATUS_NOT_FOUND);
+        }
+
+        return $task;
+    }
+
     public function getTaskResponse(array $attributes)
     {
         $task = JobTask::where('id', $attributes['task_id'])
