@@ -6,16 +6,17 @@ use Tests\BaseAuthTest;
 
 class ForgottenPasswordTest extends BaseAuthTest
 {
+    private $routeName = 'password.forgotten';
 
     /** @test */
     public function sendNotifySuccessfully()
     {
-        $response = $this->postJson(route('password.forgotten'),
+        $response = $this->postJson(route($this->routeName),
             ['email' => $this->getAdminEmail()]
         );
 
         $response
-            ->assertStatus(200)
+            ->assertStatus(static::STATUS_SUCCESS)
             ->assertSeeText(__('custom.passwords.sent'));
     }
 
@@ -23,12 +24,12 @@ class ForgottenPasswordTest extends BaseAuthTest
     public function emailInvalid()
     {
         $response = $this
-            ->postJson(route('password.forgotten'),
+            ->postJson(route($this->routeName),
             ['email' => static::EMAIL_INVALID]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -38,11 +39,11 @@ class ForgottenPasswordTest extends BaseAuthTest
     public function emailMissing()
     {
         $response = $this
-            ->postJson(route('password.forgotten')
+            ->postJson(route($this->routeName)
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -51,12 +52,12 @@ class ForgottenPasswordTest extends BaseAuthTest
     public function emailNotExists()
     {
         $response = $this
-            ->postJson(route('password.forgotten'),
+            ->postJson(route($this->routeName),
             ['email' => $this->generateUniqueEmail()]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }

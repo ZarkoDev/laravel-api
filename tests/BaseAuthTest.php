@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use App\Models\PasswordReset;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Password;
@@ -15,6 +13,15 @@ abstract class BaseAuthTest extends TestCase
     const EMAIL_INVALID = 'test.gmail.com';
     const PASSWORD_INVALID = '123456*';
     const PASSWORD_TOO_LONG = '123456789asdfghjkl';
+
+    const STATUS_SUCCESS = 200;
+    const STATUS_CREATED = 201;
+    const STATUS_BAD_REQUEST = 400;
+    const STATUS_UNAUTHORIZED = 401;
+    const STATUS_FORBIDDEN = 403;
+    const STATUS_NOT_FOUND = 404;
+    const STATUS_UNPROCESSABLE_ENTITY = 422;
+    const STATUS_INTERNAL_SERVER_ERROR = 500;
 
     private $user;
     private $userResetPasswordToken;
@@ -44,16 +51,17 @@ abstract class BaseAuthTest extends TestCase
 
     protected function getAdminUser()
     {
-        return User::firstWhere('email', $this->getAdminEmail());
+        if (!$this->user) {
+            $this->user = User::firstWhere('email', $this->getAdminEmail());
+        }
+
+        return $this->user;
+
     }
 
     protected function getAdminToken()
     {
-        if (!$this->user) {
-            return $this->getAdminUser()->token ?? null;
-        }
-
-        return $this->user;
+        return $this->getAdminUser()->token ?? null;
     }
 
     protected function getAdminLoginCredentials()

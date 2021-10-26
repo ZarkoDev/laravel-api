@@ -16,6 +16,7 @@ class UserService extends BaseService
     {
         $user = new User();
         $user->fill($attributes);
+        $user->setNewToken();
 
         if (!$user->save()) {
             throw new CreationFailedException(__('custom.user_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
@@ -32,23 +33,11 @@ class UserService extends BaseService
 
         $user->setNewToken();
 
-        return $user;
-    }
-
-    public function changePassword(array $attributes)
-    {
-        $user = User::find(auth()->id());
-
-        if (!$user) {
-            throw new NotFoundException(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
-        }
-
-        $user->password = $attributes['password'];
-        $user->token = null;
-
         if (!$user->save()) {
-            throw new UpdateFailedException(__('custom.password_update_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
+            throw new CreationFailedException(__('custom.user_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
         }
+
+        return $user;
     }
 
     public function sendForgottenPasswordLink(array $attributes)
@@ -65,10 +54,24 @@ class UserService extends BaseService
             }
         );
 
-        info('resetPass');
-
         if ($resetStatus !== Password::PASSWORD_RESET) {
             throw new PasswordResetException(__('custom.reset_password_failed'), static::STATUS_BAD_REQUEST);
+        }
+    }
+
+    public function changePassword(array $attributes)
+    {
+        $user = User::find(auth()->id());
+
+        if (!$user) {
+            throw new NotFoundException(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
+        }
+
+        $user->password = $attributes['password'];
+        $user->setNewToken();
+
+        if (!$user->save()) {
+            throw new UpdateFailedException(__('custom.password_update_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -24,13 +24,11 @@ class User extends AppModel implements Authenticatable, AuthCanResetPassword
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = $this->generatePassword($value);
-        $this->attributes['token'] = $this->generateNewLoginToken();
     }
 
     public function setNewToken()
     {
         $this->token = $this->generateNewLoginToken();
-        $this->save();
     }
 
     public function sendPasswordResetNotification($token)
@@ -46,11 +44,6 @@ class User extends AppModel implements Authenticatable, AuthCanResetPassword
 
     public function jobTasks()
     {
-        return $this->hasMany('App\Model\JobTask', 'user_id');
-    }
-
-    public function passwordResets()
-    {
-        return $this->hasMany('App\Model\JobTask', 'user_id');
+        return $this->hasMany('App\Models\JobTask', 'user_id');
     }
 }

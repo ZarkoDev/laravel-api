@@ -22,6 +22,6 @@ class JobTaskResponse extends AppModel
 
     public function user()
     {
-        return $this->belongsToThrough('App\User', 'App\JobTask');
+        return $this->belongsToThrough('App\Models\User', 'App\JobTask');
     }
 }

@@ -6,6 +6,7 @@ use Tests\BaseAuthTest;
 
 class RegisterTest extends BaseAuthTest
 {
+    private $routeName = 'register';
     private $uniqueEmail;
 
     public function __construct()
@@ -22,12 +23,12 @@ class RegisterTest extends BaseAuthTest
 
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => $uniqueEmail, 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
-            ->assertStatus(201)
+            ->assertStatus(static::STATUS_CREATED)
             ->assertSeeText(__('custom.user_creation_success'));
     }
 
@@ -36,12 +37,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . 123)
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
-            ->assertStatus(401)
+            ->assertStatus(static::STATUS_UNAUTHORIZED)
             ->assertSeeText(__('custom.not_authorized'));
     }
 
@@ -49,12 +50,12 @@ class RegisterTest extends BaseAuthTest
     public function tokenMissing()
     {
         $response = $this
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
             ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_DEFAULT]
         );
 
         $response
-            ->assertStatus(401)
+            ->assertStatus(static::STATUS_UNAUTHORIZED)
             ->assertSeeText(__('custom.not_authorized'));
     }
 
@@ -63,12 +64,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => static::EMAIL_INVALID, 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -78,12 +79,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['password' => static::PASSWORD_DEFAULT]
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -93,12 +94,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => env('ADMIN_USER_EMAIL'), 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -108,12 +109,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => $this->uniqueEmail]
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
@@ -123,12 +124,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_INVALID]
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
@@ -138,12 +139,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => $this->uniqueEmail, 'password' => '12']
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
@@ -153,12 +154,12 @@ class RegisterTest extends BaseAuthTest
     {
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
-            ->postJson(route('register'),
+            ->postJson(route($this->routeName),
                 ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_TOO_LONG]
             );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }

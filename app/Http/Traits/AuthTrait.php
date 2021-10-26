@@ -5,7 +5,6 @@ namespace App\Http\Traits;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-
 trait AuthTrait
 {
 

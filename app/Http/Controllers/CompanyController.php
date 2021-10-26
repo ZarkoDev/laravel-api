@@ -12,10 +12,7 @@ class CompanyController extends Controller
     {
         $attributes = $request->validated();
         $task = $jobTaskService->createDomainTask($attributes);
-
-        if (!$jobTaskService->runJobTask($task)) {
-            return $jobTaskService->getErrorResponse();
-        }
+        $jobTaskService->runJobTask($task);
 
         return response(__('custom.task_created_successfully'), static::STATUS_CODE_CREATED);
     }

@@ -2,19 +2,15 @@
 
 namespace App\Http\Services;
 
-use App\Http\Interfaces\ApiIntegrationInterface;
 use App\Http\Traits\ErrorTrait;
 use Illuminate\Support\Facades\Http;
 
-class ClearbitApiService implements ApiIntegrationInterface
+class ClearbitApiService extends BaseApiService
 {
     use ErrorTrait;
 
     const DOWNLOAD_COMPANY_DETAILS_ENDPOINT = 'https://company-stream.clearbit.com/v1/companies/domain/';
     CONST ERROR_MESSAGE_DEFAULT = 'Missing error message';
-
-    private $response;
-    private $responseBody;
 
     private function getApiKey()
     {
@@ -29,11 +25,6 @@ class ClearbitApiService implements ApiIntegrationInterface
         $this->responseBody = $this->response->collect();
     }
 
-    public function isResponseFailed()
-    {
-        return $this->response->failed();
-    }
-
     public function getResponseErrorMessage()
     {
         if (!$this->isResponseFailed()) {
@@ -45,15 +36,5 @@ class ClearbitApiService implements ApiIntegrationInterface
         }
 
         return $this->responseBody['error']['message'];
-    }
-
-    public function getHttpStatusCode()
-    {
-        return $this->response->getStatusCode();
-    }
-
-    public function getResponseBody()
-    {
-        return $this->responseBody;
     }
 }

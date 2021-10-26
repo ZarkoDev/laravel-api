@@ -6,16 +6,17 @@ use Tests\BaseAuthTest;
 
 class LoginTest extends BaseAuthTest
 {
+    private $routeName = 'login';
 
     /** @test */
     public function loginSuccess()
     {
-        $response = $this->postJson(route('login'),
+        $response = $this->postJson(route($this->routeName),
             $this->getAdminLoginCredentials()
         );
 
         $response
-            ->assertStatus(200)
+            ->assertStatus(static::STATUS_SUCCESS)
             ->assertJsonPath('data.email', env('ADMIN_USER_EMAIL'))
             ->assertJsonPath('data.token', $this->getAdminToken());
     }
@@ -23,12 +24,12 @@ class LoginTest extends BaseAuthTest
     /** @test */
     public function loginWithWrongPassword()
     {
-        $response = $this->postJson(route('login'),
+        $response = $this->postJson(route($this->routeName),
             ['email' => $this->getAdminEmail(), 'password' => 'wrongpass']
         );
 
         $response
-            ->assertStatus(404)
+            ->assertStatus(static::STATUS_NOT_FOUND)
             ->assertJsonPath('message', __('custom.user_not_found'));
     }
 
@@ -36,27 +37,27 @@ class LoginTest extends BaseAuthTest
     public function emailInvalid()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['email' => static::EMAIL_INVALID, 'password' => static::PASSWORD_DEFAULT]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
-    
+
 
     /** @test */
     public function emailMissing()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['password' => static::PASSWORD_DEFAULT]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -65,12 +66,12 @@ class LoginTest extends BaseAuthTest
     public function emailNotExists()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['email' => $this->generateUniqueEmail(), 'password' => static::PASSWORD_DEFAULT]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->emailInvalidStructure);
     }
@@ -79,12 +80,12 @@ class LoginTest extends BaseAuthTest
     public function passwordMissing()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['email' => static::EMAIL_INVALID]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
@@ -93,12 +94,12 @@ class LoginTest extends BaseAuthTest
     public function passwordNotAlphaNum()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['email' => static::EMAIL_INVALID, 'password' => static::PASSWORD_INVALID]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
@@ -107,12 +108,12 @@ class LoginTest extends BaseAuthTest
     public function passwordTooWeak()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['email' => static::EMAIL_INVALID, 'password' => '12']
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
@@ -121,12 +122,12 @@ class LoginTest extends BaseAuthTest
     public function passwordTooLong()
     {
         $response = $this
-            ->postJson(route('login'),
+            ->postJson(route($this->routeName),
             ['email' => static::EMAIL_INVALID, 'password' => static::PASSWORD_TOO_LONG]
         );
 
         $response
-            ->assertStatus(422)
+            ->assertStatus(static::STATUS_UNPROCESSABLE_ENTITY)
             ->assertJsonPath('message', __('custom.invalid_data'))
             ->assertJsonStructure($this->passwordInvalidStructure);
     }
