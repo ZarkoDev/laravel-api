@@ -2,32 +2,32 @@
 
 namespace App\Http\Services;
 
+use App\Exceptions\CreationFailedException;
+use App\Exceptions\PasswordResetException;
+use App\Exceptions\UpdateFailedException;
+use App\Exceptions\NotFoundException;
 use App\Models\User;
 use Illuminate\Support\Facades\Password;
 
 class UserService extends BaseService
 {
 
-    public function store($attributes)
+    public function store(array $attributes)
     {
         $user = new User();
         $user->fill($attributes);
 
         if (!$user->save()) {
-            $this->setError(__('custom.user_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
-            return false;
+            throw new CreationFailedException(__('custom.user_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
         }
-
-        return true;
     }
 
-    public function login($attributes)
+    public function login(array $attributes)
     {
         $user = User::firstWhere('email', $attributes['email']);
 
         if (!$user || !$user->isValidPassword($attributes['password'])) {
-            $this->setError(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
-            return false;
+            throw new NotFoundException(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
         }
 
         $user->setNewToken();
@@ -35,32 +35,28 @@ class UserService extends BaseService
         return $user;
     }
 
-    public function changePassword($attributes)
+    public function changePassword(array $attributes)
     {
         $user = User::find(auth()->id());
 
         if (!$user) {
-            $this->setError(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
-            return false;
+            throw new UserNotFoundException(__('custom.user_not_found'), static::STATUS_NOT_FOUND);
         }
 
         $user->password = $attributes['password'];
         $user->token = null;
 
         if (!$user->save()) {
-            $this->setError(__('custom.password_update_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
-            return false;
+            throw new UpdateFailedException(__('custom.password_update_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
         }
-
-        return true;
     }
 
-    public function sendForgottenPasswordLink($attributes)
+    public function sendForgottenPasswordLink(array $attributes)
     {
         return Password::sendResetLink($attributes);
     }
 
-    public function resetForgottenPassword($attributes)
+    public function resetForgottenPassword(array $attributes)
     {
         $resetStatus = Password::reset($attributes,
             function ($user, $password) {
@@ -70,10 +66,7 @@ class UserService extends BaseService
         );
 
         if ($resetStatus !== Password::PASSWORD_RESET) {
-            $this->setError(__('custom.reset_password_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
-            return false;
+            throw new PasswordResetException(__('custom.reset_password_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
         }
-
-        return true;
     }
 }

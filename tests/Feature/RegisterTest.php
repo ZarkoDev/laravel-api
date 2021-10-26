@@ -1,21 +1,29 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
-use Illuminate\Support\Str;
+use Tests\BaseAuthTest;
 
 class RegisterTest extends BaseAuthTest
 {
+    private $uniqueEmail;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->uniqueEmail = $this->generateUniqueEmail();
+    }
 
     /** @test */
     public function userCreationSuccess()
     {
-        $uniqueEmail = Str::random(15) . '@test.com';
+        $uniqueEmail = $this->generateUniqueEmail();
 
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
             ->postJson(route('register'),
-                ['email' => $uniqueEmail, 'password' => '123456']
+                ['email' => $uniqueEmail, 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
@@ -26,12 +34,10 @@ class RegisterTest extends BaseAuthTest
     /** @test */
     public function tokenFailed()
     {
-        $uniqueEmail = Str::random(15) . '@test.com';
-
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . 123)
             ->postJson(route('register'),
-                ['email' => $uniqueEmail, 'password' => '123456']
+                ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
@@ -42,12 +48,10 @@ class RegisterTest extends BaseAuthTest
     /** @test */
     public function tokenMissing()
     {
-        $uniqueEmail = Str::random(15) . '@test.com';
-
         $response = $this
             ->postJson(route('register'),
-                ['email' => $uniqueEmail, 'password' => '123456']
-            );
+            ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_DEFAULT]
+        );
 
         $response
             ->assertStatus(401)
@@ -57,64 +61,105 @@ class RegisterTest extends BaseAuthTest
     /** @test */
     public function emailInvalid()
     {
-        $uniqueEmail = Str::random(15) . 'test.com';
-
         $response = $this
-        ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
             ->postJson(route('register'),
-                ['email' => $uniqueEmail, 'password' => '123456']
+                ['email' => static::EMAIL_INVALID, 'password' => static::PASSWORD_DEFAULT]
             );
 
         $response
             ->assertStatus(422)
             ->assertJsonPath('message', __('custom.invalid_data'))
-            ->assertJsonStructure([
-                'message',
-                'errors' => [
-                    'email'
-                ]
-                ]);
+            ->assertJsonStructure($this->emailInvalidStructure);
     }
 
     /** @test */
     public function emailMissing()
     {
         $response = $this
-        ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
             ->postJson(route('register'),
-                ['password' => '123456']
+                ['password' => static::PASSWORD_DEFAULT]
             );
 
         $response
             ->assertStatus(422)
             ->assertJsonPath('message', __('custom.invalid_data'))
-            ->assertJsonStructure([
-                'message',
-                'errors' => [
-                    'email'
-                ]
-                ]);
+            ->assertJsonStructure($this->emailInvalidStructure);
+    }
+
+    /** @test */
+    public function emailAlreadyExists()
+    {
+        $response = $this
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->postJson(route('register'),
+                ['email' => env('ADMIN_USER_EMAIL'), 'password' => static::PASSWORD_DEFAULT]
+            );
+
+        $response
+            ->assertStatus(422)
+            ->assertJsonPath('message', __('custom.invalid_data'))
+            ->assertJsonStructure($this->emailInvalidStructure);
     }
 
     /** @test */
     public function passwordMissing()
     {
-        $uniqueEmail = Str::random(15) . '@test.com';
-
         $response = $this
-        ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
             ->postJson(route('register'),
-                ['email' => $uniqueEmail]
+                ['email' => $this->uniqueEmail]
             );
 
         $response
             ->assertStatus(422)
             ->assertJsonPath('message', __('custom.invalid_data'))
-            ->assertJsonStructure([
-                'message',
-                'errors' => [
-                    'password'
-                ]
-                ]);
+            ->assertJsonStructure($this->passwordInvalidStructure);
+    }
+
+    /** @test */
+    public function passwordNotAlphaNum()
+    {
+        $response = $this
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->postJson(route('register'),
+                ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_INVALID]
+            );
+
+        $response
+            ->assertStatus(422)
+            ->assertJsonPath('message', __('custom.invalid_data'))
+            ->assertJsonStructure($this->passwordInvalidStructure);
+    }
+
+    /** @test */
+    public function passwordTooWeak()
+    {
+        $response = $this
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->postJson(route('register'),
+                ['email' => $this->uniqueEmail, 'password' => '12']
+            );
+
+        $response
+            ->assertStatus(422)
+            ->assertJsonPath('message', __('custom.invalid_data'))
+            ->assertJsonStructure($this->passwordInvalidStructure);
+    }
+
+    /** @test */
+    public function passwordTooLong()
+    {
+        $response = $this
+            ->withHeader('Authorization', 'Bearer ' . $this->getAdminToken())
+            ->postJson(route('register'),
+                ['email' => $this->uniqueEmail, 'password' => static::PASSWORD_TOO_LONG]
+            );
+
+        $response
+            ->assertStatus(422)
+            ->assertJsonPath('message', __('custom.invalid_data'))
+            ->assertJsonStructure($this->passwordInvalidStructure);
     }
 }

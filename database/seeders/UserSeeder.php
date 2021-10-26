@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
     {
         $userService->store([
             'email' => env('ADMIN_USER_EMAIL'),
-            'password' => 123456
+            'password' => env('ADMIN_USER_PASSWORD')
         ]);
     }
 }

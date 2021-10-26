@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::post('/login', [UsersController::class, 'login'])->name('login');
-Route::post('/forgotten', [UsersController::class, 'forgotPassword'])->name('password.forgot');
+Route::post('/forgotten', [UsersController::class, 'forgotPassword'])->name('password.forgotten');
 Route::post('/forgotten/{token}', [UsersController::class, 'resetForgotPassword'])->name('password.reset');
 
 Route::group(['middleware' => ['api.auth']], function () {

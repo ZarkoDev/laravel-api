@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'passwords.sent' => 'Reset password link is sent to your email (see the log).',
-    'passwords.throttled' => 'Reset password link is already sent to your email (see the log).',
+    'passwords.sent' => 'Reset password link is sent to your email (see the log)',
+    'passwords.throttled' => 'Reset password link is sent to your email (see the log)',
     'user_not_found' => 'User is not found',
     'user_creation_failed' => 'User creation failed',
     'password_update_failed' => 'User password is not updated',
@@ -21,4 +21,5 @@ return [
     'not_authorized' => 'Not authorized',
     'email_invalid' => 'The email must be a valid email address',
     'invalid_data' => 'The given data was invalid.',
+    'task_created_successfully' => 'Successfully created task for download company details. You will be notified by email when the task is completed'
 ];

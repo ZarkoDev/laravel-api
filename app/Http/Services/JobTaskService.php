@@ -2,6 +2,9 @@
 
 namespace App\Http\Services;
 
+use App\Exceptions\CreationFailedException;
+use App\Exceptions\JobTaskException;
+use App\Exceptions\NotFoundException;
 use App\Models\JobTask;
 use App\Jobs\DownloadCompanyDetails;
 
@@ -16,8 +19,7 @@ class JobTaskService extends BaseService
         $task->value = $attributes['domain'];
 
         if (!$task->save()) {
-            $this->setError(__('custom.task_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
-            return false;
+            throw new CreationFailedException(__('custom.task_creation_failed'), static::STATUS_INTERNAL_SERVER_ERROR);
         }
 
         return $task;
@@ -29,8 +31,7 @@ class JobTaskService extends BaseService
             case JobTask::TYPE_DOMAIN:
                 return DownloadCompanyDetails::dispatch($task)->onQueue('tasks');
             default:
-                $this->setError(__('custom.task_type_unknown'), static::STATUS_BAD_REQUEST);
-                return false;
+                throw new JobTaskException(__('custom.task_type_unknown'), static::STATUS_BAD_REQUEST);
         }
     }
 
@@ -42,7 +43,7 @@ class JobTaskService extends BaseService
             ->first();
 
         if (!$task) {
-            $this->setError(__('custom.task_not_found'), static::STATUS_NOT_FOUND);
+            throw new NotFoundException(__('custom.task_not_found'), static::STATUS_NOT_FOUND);
         }
 
         if ($task->response) {

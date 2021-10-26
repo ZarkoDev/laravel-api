@@ -18,11 +18,13 @@ class User extends AppModel implements Authenticatable, AuthCanResetPassword
     protected $fillable = [
         'email',
         'password',
+        'token',
     ];
 
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = $this->generatePassword($value);
+        $this->attributes['token'] = $this->generateNewLoginToken();
     }
 
     public function setNewToken()

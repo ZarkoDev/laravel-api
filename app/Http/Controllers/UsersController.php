@@ -16,11 +16,7 @@ class UsersController extends Controller
     public function register(RegisterRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
-        $user = $userService->store($attributes);
-
-        if (!$user) {
-            return $userService->getErrorResponse();
-        }
+        $userService->store($attributes);
 
         return response(__('custom.user_creation_success'), static::STATUS_CODE_CREATED);
     }
@@ -30,21 +26,13 @@ class UsersController extends Controller
         $attributes = $request->validated();
         $user = $userService->login($attributes);
 
-        if (!$user) {
-            return $userService->getErrorResponse();
-        }
-
         return new UserLoginResource($user);
     }
 
     public function changePassword(ChangePasswordRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
-        $user = $userService->changePassword($attributes);
-
-        if (!$user) {
-            return $userService->getErrorResponse();
-        }
+        $userService->changePassword($attributes);
 
         return response(__('custom.change_password_success'));
     }
@@ -53,18 +41,14 @@ class UsersController extends Controller
     {
         $attributes = $request->validated();
 
-        return response(__('custom.'.$userService->sendForgottenPasswordLink($attributes)));
+        return response(__('custom.' . $userService->sendForgottenPasswordLink($attributes)));
     }
 
     public function resetForgotPassword(ResetForgotPasswordRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
         $attributes['token'] = $request->token;
-        $response = $userService->resetForgottenPassword($attributes);
-
-        if (!$response) {
-            return $userService->getErrorResponse();
-        }
+        $userService->resetForgottenPassword($attributes);
 
         return response(__('custom.password_reset_success'));
     }
