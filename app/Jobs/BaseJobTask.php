@@ -4,9 +4,16 @@ namespace App\Jobs;
 
 use App\Models\JobTask;
 use App\Notifications\JobTaskNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-abstract class BaseJobTask
+abstract class BaseJobTask implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     abstract protected function executeTask();
     abstract public function handle();
 
@@ -43,7 +50,7 @@ abstract class BaseJobTask
         if (!$this->isValidUser()) {
             return false;
         }
-        
+
         $this->task->user->notify(new JobTaskNotification($this->task));
 
         return true;

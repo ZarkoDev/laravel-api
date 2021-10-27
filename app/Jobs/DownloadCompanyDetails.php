@@ -5,15 +5,9 @@ namespace App\Jobs;
 use App\Http\Services\ClearbitApiService;
 use App\Models\JobTask;
 use Exception;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-class DownloadCompanyDetails extends BaseJobTask implements ShouldQueue
+class DownloadCompanyDetails extends BaseJobTask
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $task;
     protected $clearbitApiService;

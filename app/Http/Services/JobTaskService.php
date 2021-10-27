@@ -25,16 +25,6 @@ class JobTaskService extends BaseService
         return $task;
     }
 
-    public function runJobTask(JobTask $task)
-    {
-        switch ($task->type) {
-            case JobTask::TYPE_DOMAIN:
-                return DownloadCompanyDetails::dispatch($task)->onQueue('tasks');
-            default:
-                throw new JobTaskException(__('custom.task_type_unknown'), static::STATUS_BAD_REQUEST);
-        }
-    }
-
     public function getTask(array $attributes)
     {
         $task = Auth()->user()->jobTasks()->firstWhere(['id' => $attributes['task_id']]);
