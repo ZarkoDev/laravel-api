@@ -3,10 +3,8 @@
 namespace App\Http\Services;
 
 use App\Exceptions\CreationFailedException;
-use App\Exceptions\JobTaskException;
 use App\Exceptions\NotFoundException;
 use App\Models\JobTask;
-use App\Jobs\DownloadCompanyDetails;
 
 class JobTaskService extends BaseService
 {
@@ -38,16 +36,11 @@ class JobTaskService extends BaseService
 
     public function getTaskResponse(array $attributes)
     {
-        $task = JobTask::where('id', $attributes['task_id'])
-            ->where('user_id', Auth()->id())
-            ->with('response')
-            ->first();
+        $task = $this->getTask($attributes);
 
-        if (!$task) {
-            throw new NotFoundException(__('custom.task_not_found'), static::STATUS_NOT_FOUND);
-        }
-
-        if ($task->response) {
+        if (in_array($task->status, [JobTask::STATUS_CREATED, JobTask::STATUS_IN_PROGRESS])) {
+            return __('custom.task_not_processed');
+        } elseif ($task->response) {
             return $task->response->response;
         }
 

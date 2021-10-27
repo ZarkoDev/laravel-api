@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\JobTask;
 use App\Notifications\JobTaskNotification;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,7 +16,30 @@ abstract class BaseJobTask implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     abstract protected function executeTask();
-    abstract public function handle();
+
+    protected $task;
+
+    public function __construct(JobTask $task)
+    {
+        $this->task = $task;
+    }
+
+    public function handle()
+    {
+        if (!$this->isValidTask()) {
+            $this->completeTask();
+            return;
+        }
+
+        try {
+            $this->startTask();
+            $this->executeTask();
+        } catch (Exception $ex) {
+            $this->setTaskError($ex->getMessage());
+        }
+
+        $this->completeTask();
+    }
 
     protected function isValidTask()
     {
@@ -23,12 +47,6 @@ abstract class BaseJobTask implements ShouldQueue
             $this->setTaskError('Not found task');
             return false;
         }
-    }
-
-    protected function setTaskError($message)
-    {
-        $this->task->status = JobTask::STATUS_FAILED;
-        $this->task->error = $message;
     }
 
     protected function startTask()
@@ -74,5 +92,11 @@ abstract class BaseJobTask implements ShouldQueue
         }
 
         return true;
+    }
+
+    protected function setTaskError($message)
+    {
+        $this->task->status = JobTask::STATUS_FAILED;
+        $this->task->error = $message;
     }
 }

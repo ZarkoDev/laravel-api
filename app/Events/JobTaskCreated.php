@@ -4,7 +4,6 @@ namespace App\Events;
 
 use App\Models\JobTask;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -18,9 +17,4 @@ class JobTaskCreated
     {
         $this->jobTask = $jobTask;
     }
-
-    // public function broadcastOn()
-    // {
-    //     return new PrivateChannel('tasks');
-    // }
 }

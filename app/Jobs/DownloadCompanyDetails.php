@@ -4,35 +4,16 @@ namespace App\Jobs;
 
 use App\Http\Services\ClearbitApiService;
 use App\Models\JobTask;
-use Exception;
 
 class DownloadCompanyDetails extends BaseJobTask
 {
-
-    protected $task;
     protected $clearbitApiService;
 
     public function __construct(JobTask $task)
     {
-        $this->task = $task;
+        parent::__construct($task);
+
         $this->clearbitApiService = new ClearbitApiService();
-    }
-
-    public function handle()
-    {
-        if (!$this->isValidTask()) {
-            $this->completeTask();
-            return;
-        }
-
-        try {
-            $this->startTask();
-            $this->executeTask();
-        } catch (Exception $ex) {
-            $this->setTaskError($ex->getMessage());
-        }
-
-        $this->completeTask();
     }
 
     protected function isValidTask()

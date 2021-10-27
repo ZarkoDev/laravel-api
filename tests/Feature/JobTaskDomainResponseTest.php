@@ -6,7 +6,7 @@ use App\Exceptions\NotFoundException;
 use App\Models\JobTask;
 use Tests\BaseAuthTest;
 
-class JobTaskResponseTest extends BaseAuthTest
+class JobTaskDomainResponseTest extends BaseAuthTest
 {
     private $routeName = 'task.response';
     private $domain = 'segment.com';
@@ -33,9 +33,18 @@ class JobTaskResponseTest extends BaseAuthTest
                 ['task_id' => $this->jobTask->id]
             );
 
-        $response
-            ->assertStatus(static::STATUS_SUCCESS)
-            ->assertJsonPath('domain', $this->domain);
+        if (in_array($this->jobTask->status, [JobTask::STATUS_CREATED, JobTask::STATUS_IN_PROGRESS])) {
+            $response
+                ->assertStatus(static::STATUS_SUCCESS)
+                ->assertSeeText(__('custom.task_not_processed'));
+        } elseif ($this->jobTask->response) {
+            $response
+                ->assertStatus(static::STATUS_SUCCESS)
+                ->assertJsonPath('domain', $this->domain);
+        } else {
+            $response
+                ->assertStatus(static::STATUS_SUCCESS);
+        }
     }
 
     /**
