@@ -7,7 +7,7 @@ use App\Models\JobTask;
 
 class DownloadCompanyDetails extends BaseJobTask
 {
-    protected $clearbitApiService;
+    private $clearbitApiService;
 
     public function __construct(JobTask $task)
     {
@@ -20,7 +20,7 @@ class DownloadCompanyDetails extends BaseJobTask
     {
         parent::isValidTask();
 
-        if ($this->task->type !== JobTask::TYPE_DOMAIN) {
+        if (!$this->task->type == JobTask::TYPE_DOMAIN) {
             $this->setTaskError(__('custom.job_task_type_wrong'));
             return false;
         }

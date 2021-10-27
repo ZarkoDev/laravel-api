@@ -96,7 +96,10 @@ abstract class BaseJobTask implements ShouldQueue
 
     protected function setTaskError($message)
     {
+        $errors = explode(';', $this->task->error);
+        $errors[] = $message;
+
+        $this->task->error = implode(';', array_filter($errors));
         $this->task->status = JobTask::STATUS_FAILED;
-        $this->task->error = $message;
     }
 }
