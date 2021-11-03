@@ -32,8 +32,9 @@ class UsersController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request, UserService $userService)
     {
         $attributes = $request->validated();
+        $status = $userService->sendForgottenPasswordLink($attributes);
 
-        return response(__('custom.' . $userService->sendForgottenPasswordLink($attributes)));
+        return response(__('custom.' . $status));
     }
 
     public function resetForgotPassword(ResetForgotPasswordRequest $request, UserService $userService)

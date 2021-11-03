@@ -45,11 +45,11 @@ class JobTask extends AppModel
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User', 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function response()
     {
-        return $this->hasOne('App\Models\JobTaskResponse', 'job_task_id');
+        return $this->hasOne(JobTaskResponse::class, 'job_task_id');
     }
 }

@@ -17,11 +17,11 @@ class JobTaskResponse extends AppModel
 
     public function task()
     {
-        return $this->belongsTo('App\Models\JobTask', 'job_task_id');
+        return $this->belongsTo(JobTask::class, 'job_task_id');
     }
 
     public function user()
     {
-        return $this->belongsToThrough('App\Models\User', 'App\JobTask');
+        return $this->belongsToThrough(User::class, JobTask::class);
     }
 }
